@@ -1,5 +1,6 @@
 # Set up spaCy
 import spacy
+
 parser = spacy.load('en')
 
 my_possessions = []
@@ -9,6 +10,7 @@ your_possessions = []
 def is_plural(word):
     return word.pos == spacy.parts_of_speech.NOUN and word.lemma != word.lower
 
+
 def has_possession(possession, possessions):
     if possession in possessions:
         return True
@@ -17,6 +19,7 @@ def has_possession(possession, possessions):
             if possession.lemma == thing.lemma:
                 return True
         return False
+
 
 def add_possession(possession, possessions):
     if is_plural(possession):
@@ -28,8 +31,15 @@ def add_possession(possession, possessions):
         else:
             possessions.append(possession)
     else:
+        #beginnings of pluralization
+        if has_possession(possession, possessions):
+            for x in range(len(possessions)):
+                if possession.lemma == possessions[x].lemma:
+                    break
+            possessions[x] = possession + "s"
         if not has_possession(possession, possessions):
             possessions.append(possession)
+
 
 while True:
     sentence = input()
@@ -66,7 +76,8 @@ while True:
                                 else:
                                     response.append("No.")
                             if left[1].text == "we":
-                                if has_possession(right[0], my_possessions) and has_possession(right[0], your_possessions):
+                                if has_possession(right[0], my_possessions) and has_possession(right[0],
+                                                                                               your_possessions):
                                     response.append("Yes.")
                                 else:
                                     response.append("No.")
@@ -92,10 +103,12 @@ while True:
                                 else:
                                     response.append("No.")
                             if left[1].text == "we":
-                                if has_possession(right[0], my_possessions) and has_possession(right[0], your_possessions):
+                                if has_possession(right[0], my_possessions) and has_possession(right[0],
+                                                                                               your_possessions):
                                     response.append("Yes.")
                                 else:
                                     response.append("No.")
-            print(word.text, word.lemma_, word.tag_, word.pos_, word.dep_, word.head.text, [t.text for t in word.lefts], [t.text for t in word.rights])
+            print(word.text, word.lemma_, word.tag_, word.pos_, word.dep_, word.head.text, [t.text for t in word.lefts],
+                  [t.text for t in word.rights])
     for line in response:
         print("Response: " + line)
